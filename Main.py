@@ -45,12 +45,13 @@ def import_bank_csv(filename):
             date = row.get("Date")
             description = row.get("Description", "")
             amount = row.get("Amount")
+            txn_type = row.get("Type")
 
-            if not date or not amount:
+            if not date or not amount or not txn_type:
                 continue
 
             category = categorize_transaction(description)
-            writer.writerow([date, description, category, amount])
+            writer.writerow([date, description, category, txn_type, amount])
             imported += 1
 
     print(f"Imported {imported} transactions.")
@@ -60,16 +61,30 @@ def show_expenses():
     try:
         with open(EXPENSES_FILE, "r") as file:
             reader = csv.reader(file)
-            total = 0
+
+            income_total = 0.0
+            expense_total = 0.0
 
             print("\nTransactions:")
             for row in reader:
-                date, description, category, amount = row
+                date, description, category, txn_type, amount = row
                 amount = float(amount)
-                print(f"{date} | {category:<12} | {description} | ${amount}")
-                total += amount
 
-            print(f"\nNet total: ${total}")
+                direction = "IN " if txn_type == "Credit" else "OUT"
+
+                print(
+                    f"{date} | {direction} | {category:<15} | {description} | ${amount:.2f}"
+                )
+
+                if txn_type == "Credit":
+                    income_total += amount
+                else:
+                    expense_total += amount
+
+            print("\nSummary:")
+            print(f"Total Income:    ${income_total:.2f}")
+            print(f"Total Expenses: ${expense_total:.2f}")
+            print(f"Net Total:      ${income_total - expense_total:.2f}")
 
     except FileNotFoundError:
         print("No expenses found yet.")
