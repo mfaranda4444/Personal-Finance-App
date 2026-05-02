@@ -1,53 +1,93 @@
 import csv
 
-FILENAME = "expenses.csv"
+CATEGORY_RULES = {
+    "Food": [
+        "STARBUCKS", "DUTCH BROS", "RESTAURANT", "CAFE", "CHICK FIL-A", "SWIG"
+    ],
+    "Gas": [
+        "FUEL", "CHEVRON", "EXXON", "MOBIL"
+    ],
+    "Groceries": [
+        "WALMART", "TARGET", "SMITHS", "COSTCO", "TRADER JOE"
+    ],
+    "Utilities": [
+        "ELECTRIC", "WATER", "GAS BILL", "INTERNET", "COMCAST"
+    ],
+    "Income": [
+        "PAYROLL", "DIRECT DEPOSIT", "SALARY"
+    ]
+}
+
+EXPENSES_FILE = "expenses.csv"
 
 
-def add_expense():
-    amount = input("Enter amount: ")
-    category = input("Enter category: ")
+def categorize_transaction(description):
+    description = description.upper()
 
-    with open(FILENAME, "a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow([amount, category])
+    for category, keywords in CATEGORY_RULES.items():
+        for keyword in keywords:
+            if keyword in description:
+                return category
 
-    print("Expense saved!")
+    return "Uncategorized"
+
+
+def import_bank_csv(filename):
+    with open(filename, "r", newline="", encoding="utf-8-sig") as bank_file, \
+         open(EXPENSES_FILE, "a", newline="") as expenses_file:
+
+        reader = csv.DictReader(bank_file)
+        writer = csv.writer(expenses_file)
+
+        imported = 0
+
+        for row in reader:
+            date = row.get("Date")
+            description = row.get("Description", "")
+            amount = row.get("Amount")
+
+            if not date or not amount:
+                continue
+
+            category = categorize_transaction(description)
+            writer.writerow([date, description, category, amount])
+            imported += 1
+
+    print(f"Imported {imported} transactions.")
 
 
 def show_expenses():
     try:
-        with open(FILENAME, "r") as file:
+        with open(EXPENSES_FILE, "r") as file:
             reader = csv.reader(file)
             total = 0
 
-            print("\nYour Expenses:")
+            print("\nTransactions:")
             for row in reader:
-                if len(row) == 0:
-                    continue
-                amount = float(row[0])
-                category = row[1]
-                print(f"{category}: ${amount}")
+                date, description, category, amount = row
+                amount = float(amount)
+                print(f"{date} | {category:<12} | {description} | ${amount}")
                 total += amount
 
-            print(f"\nTotal spending: ${total}")
+            print(f"\nNet total: ${total}")
 
     except FileNotFoundError:
         print("No expenses found yet.")
 
 
 while True:
-    print("\n1. Add Expense")
-    print("2. Show Expenses")
+    print("\n1. Import bank CSV")
+    print("2. Show transactions")
     print("3. Exit")
 
-    choice = input("Choose an option: ")
+    choice = input("Choose an option: ").strip()
 
     if choice == "1":
-        add_expense()
+        filename = input("Enter bank CSV filename: ").strip()
+        import_bank_csv(filename)
     elif choice == "2":
         show_expenses()
     elif choice == "3":
-        print("Goodbye!")
         break
     else:
-        print("Invalid choice")
+        print("Invalid choice.")
