@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Budget vs Forecast</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th class="right">Budget</th>
+            <th class="right">Forecast</th>
+            <th class="right">Remaining</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.category }}</td>
+            <td class="right">{{ row.budget | money }}</td>
+            <td class="right">{{ row.forecast | money }}</td>
+            <td class="right {{ 'negative' if row.remaining < 0 else 'positive' }}">
+                {{ row.remaining | money }}
+            </td>
+            <td>
+                <span class="pill {{ 'bad' if row.status == 'OVER' else 'good' }}">
+                    {{ row.status }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

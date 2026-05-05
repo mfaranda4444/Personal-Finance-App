@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Finance Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <h1>Finance</h1>
+
+            <nav>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('import_csv') }}">Import CSV</a>
+                <a href="{{ url_for('transactions') }}">Transactions</a>
+                <a href="{{ url_for('monthly_summary') }}">Monthly Summary</a>
+                <a href="{{ url_for('budget_forecast') }}">Budget vs Forecast</a>
+                <a href="{{ url_for('cash_flow') }}">Cash Flow Forecast</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Monthly Summary</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th class="right">Income</th>
+            <th class="right">Expenses</th>
+            <th class="right">Net</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.month }}</td>
+            <td class="right positive">
+                {{ row.income | money }}
+            </td>
+            <td class="right negative">
+                {{ row.expenses | money }}
+            </td>
+            <td class="right">
+                {{ row.net | money }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

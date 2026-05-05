@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="cards">
+    <div class="card">
+        <h3>Total Income</h3>
+        <p class="money positive">{{ totals.income | money }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Expenses</h3>
+        <p class="money negative">{{ totals.expenses | money }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Net</h3>
+        <p class="money">{{ totals.net | money }}</p>
+    </div>
+</div>
+
+<div class="panel">
+    <h3>Quick Actions</h3>
+    <div class="button-row">
+        <a class="button" href="{{ url_for('import_csv') }}">Import CSV</a>
+        <a class="button" href="{{ url_for('monthly_summary') }}">View Monthly Summary</a>
+        <a class="button" href="{{ url_for('budget_forecast') }}">Budget vs Forecast</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Transactions</h2>
+
+<div class="panel transaction-filters">
+
+    <div class="filters-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="filters-left">
+
+            <div class="date-buttons">
+                <a href="{{ url_for('transactions', range='this_month', q=search_query) }}"
+                   class="button {{ 'active' if active_range == 'this_month' else '' }}">
+                    This Month
+                </a>
+
+                <a href="{{ url_for('transactions', range='last_month', q=search_query) }}"
+                   class="button {{ 'active' if active_range == 'last_month' else '' }}">
+                    Last Month
+                </a>
+
+                <a href="{{ url_for('transactions', range='last_30', q=search_query) }}"
+                   class="button {{ 'active' if active_range == 'last_30' else '' }}">
+                    Last 30 Days
+                </a>
+
+                <a href="{{ url_for('transactions', range='last_90', q=search_query) }}"
+                   class="button {{ 'active' if active_range == 'last_90' else '' }}">
+                    Last 90 Days
+                </a>
+
+                <a href="{{ url_for('transactions', range='ytd', q=search_query) }}"
+                   class="button {{ 'active' if active_range == 'ytd' else '' }}">
+                    Year to Date
+                </a>
+            </div>
+
+            <form method="GET" class="search-form">
+                <input type="hidden" name="range" value="{{ active_range }}">
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search transactions"
+                    value="{{ search_query }}"
+                >
+                <button type="submit">Search</button>
+            </form>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="summary-side">
+            <div class="summary-card">
+                <h4>Transactions</h4>
+                <div class="summary-value">{{ transaction_count }}</div>
+            </div>
+
+            <div class="summary-card">
+                <h4>Total Spending</h4>
+                <div class="summary-value negative">
+                    {{ total_amount | money }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th class="right">Amount</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for tx in transactions %}
+        <tr>
+            <td>{{ tx.date }}</td>
+            <td>
+                <span class="pill {{ 'credit' if tx.type == 'Credit' else 'debit' }}">
+                    {{ tx.type }}
+                </span>
+            </td>
+            <td>{{ tx.category }}</td>
+            <td>
+    {{ tx.description }}
+
+    {% if "TRANSFER" in tx.description.upper()
+          or "APPLE PAY" in tx.description.upper()
+          or "APPLE CASH" in tx.description.upper()
+          or "VENMO" in tx.description.upper() %}
+        <span class="pill transfer">TRANSFER</span>
+    {% endif %}
+</td>
+            <td class="right {{ 'positive' if tx.type == 'Credit' else 'negative' }}">
+                {{ tx.amount | money }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

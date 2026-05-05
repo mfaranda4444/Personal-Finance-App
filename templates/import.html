@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+    console.log("✅ import.html JavaScript LOADED");
+</script>
+<h2>Import Bank CSV</h2>
+
+<div
+    id="drop-zone"
+    class="drop-zone"
+>
+    <p>
+        Drag & drop your bank CSV here<br>
+        <span>or click to browse</span>
+    </p>
+
+    <form
+        id="upload-form"
+        method="POST"
+        enctype="multipart/form-data"
+        class="hidden"
+    >
+        <input
+            type="file"
+            name="file"
+            id="file-input"
+            accept=".csv"
+        >
+    </form>
+</div>
+
+{% if message %}
+    <div class="alert success">{{ message }}</div>
+{% endif %}
+
+{% if error %}
+    <div class="alert error">{{ error }}</div>
+{% endif %}
+
+<script>
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    const uploadForm = document.getElementById("upload-form");
+    const uploadButton = document.getElementById("upload-button");
+
+    dropZone.addEventListener("click", () => fileInput.click());
+
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragging");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragging");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragging");
+
+        if (e.dataTransfer.files.length === 0) return;
+
+        fileInput.files = e.dataTransfer.files;
+
+        // ✅ AUTO‑SUBMIT ON DROP
+        uploadForm.submit();
+    });
+
+    fileInput.addEventListener("change", () => {
+        if (fileInput.files.length) {
+            uploadForm.submit();
+        }
+    });
+</script>
+{% endblock %}
