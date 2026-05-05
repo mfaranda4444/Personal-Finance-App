@@ -1,0 +1,32 @@
+# Virtual environments
+.venv/
+venv/
+
+# Uploaded files
+uploads/
+*.csv
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+# Uploaded and data files
+uploads/
+*.csv
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# VS Code
+.vscode/
